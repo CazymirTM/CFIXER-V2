@@ -42,7 +42,9 @@ namespace CFIXERV2
             {
                 { "SFC Scan", RunSFCAsync },
                 { "DISM Checks", RunDISMAsync },
-                { "Network Fixes", RunNetworkFixesAsync }
+                { "Network Fixes", RunNetworkFixesAsync },
+                { "Windows Update Reset", RunWindowsUpdateResetAsync },
+                { "Firewall Reset", RunFirewallResetAsync }
             };
 
             checkedListBox1.Items.Clear();
@@ -64,17 +66,85 @@ namespace CFIXERV2
         // ------------------------------
         // SFC Scan - instruct user to run manually
         // ------------------------------
-        private Task RunSFCAsync()
+        private async Task RunSFCAsync()
         {
-            MessageBox.Show(
-                "SFC Scan must be run manually in a separate elevated Command Prompt.\n\n" +
-                "Open CMD as Administrator and run:\n\nsfc /scannow\n\n" +
-                "Then wait until it finishes.",
-                "SFC Scan Required",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string logFile = Path.Combine(desktopPath, "SFCScan_Log.txt");
 
-            return Task.CompletedTask;
+            lblLog.Invoke((Action)(() =>
+                lblLog.Text = "Running System File Checker. This can take a while..."));
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    var startInfo = new ProcessStartInfo
+                    {
+                        FileName = "cmd.exe",
+                        Arguments = "/c sfc /scannow",
+                        RedirectStandardOutput = true,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
+
+                    using (var process = new Process { StartInfo = startInfo })
+                    {
+                        var outputBuilder = new StringBuilder();
+
+                        process.Start();
+
+                        outputBuilder.AppendLine(process.StandardOutput.ReadToEnd());
+                        outputBuilder.AppendLine(process.StandardError.ReadToEnd());
+
+                        process.WaitForExit();
+
+                        var (statusMessage, logSummary) = InterpretSfcExitCode(process.ExitCode);
+
+                        string logEntry =
+                            $"{DateTime.Now}: SFC /scannow exited with code {process.ExitCode}. {logSummary}\n" +
+                            outputBuilder.ToString();
+
+                        File.AppendAllText(logFile, logEntry + "\n------------------------------\n");
+
+                        lblLog.Invoke((Action)(() => lblLog.Text = statusMessage));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    lblLog.Invoke((Action)(() =>
+                    {
+                        lblLog.Text = $"Failed to run SFC scan: {ex.Message}";
+                    }));
+
+                    try
+                    {
+                        File.AppendAllText(logFile, $"{DateTime.Now}: Failed to run SFC scan - {ex}\n");
+                    }
+                    catch
+                    {
+                        // Ignored - if we cannot log, there's nothing else to do.
+                    }
+                }
+            });
+        }
+
+        private (string statusMessage, string logSummary) InterpretSfcExitCode(int exitCode)
+        {
+            switch (exitCode)
+            {
+                case 0:
+                    return ("SFC scan completed successfully.", "No integrity violations were found.");
+                case 1:
+                    return ("SFC scan completed and repaired system files. A reboot may be required.",
+                        "Integrity violations were found and repaired.");
+                case 2:
+                    return ("SFC scan found issues that require a reboot or additional actions. See the log on your desktop.",
+                        "Integrity violations were found but some could not be repaired. A reboot may be pending.");
+                default:
+                    return ($"SFC scan failed with exit code {exitCode}. Check the log on your desktop for details.",
+                        "The scan did not complete successfully.");
+            }
         }
 
         // ------------------------------
@@ -111,11 +181,8 @@ namespace CFIXERV2
         // ------------------------------
         // Network Fixes - fully automated
         // ------------------------------
-        private async Task RunNetworkFixesAsync()
+        private Task RunNetworkFixesAsync()
         {
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string logFile = Path.Combine(desktopPath, "NetworkFixes_Log.txt");
-
             var commands = new string[]
             {
                 "ipconfig /flushdns",
@@ -123,9 +190,52 @@ namespace CFIXERV2
                 "netsh int ip reset"
             };
 
-            foreach (var cmd in commands)
+            return RunCommandSequenceAsync("Network Fixes", commands, "NetworkFixes_Log.txt");
+        }
+
+        private Task RunWindowsUpdateResetAsync()
+        {
+            var commands = new string[]
             {
-                await Task.Run(() =>
+                "net stop wuauserv",
+                "net stop cryptSvc",
+                "net stop bits",
+                "net stop msiserver",
+                "if exist \"%WINDIR%\\SoftwareDistribution\" ren \"%WINDIR%\\SoftwareDistribution\" SoftwareDistribution.old",
+                "if exist \"%WINDIR%\\System32\\catroot2\" ren \"%WINDIR%\\System32\\catroot2\" catroot2.old",
+                "net start wuauserv",
+                "net start cryptSvc",
+                "net start bits",
+                "net start msiserver"
+            };
+
+            return RunCommandSequenceAsync("Windows Update Reset", commands, "WindowsUpdateReset_Log.txt");
+        }
+
+        private Task RunFirewallResetAsync()
+        {
+            var commands = new string[]
+            {
+                "netsh advfirewall reset",
+                "netsh advfirewall set allprofiles state on"
+            };
+
+            return RunCommandSequenceAsync("Firewall Reset", commands, "FirewallReset_Log.txt");
+        }
+
+        private Task RunCommandSequenceAsync(string fixName, IEnumerable<string> commands, string logFileName)
+        {
+            return Task.Run(() =>
+            {
+                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string logFile = Path.Combine(desktopPath, logFileName);
+                var logDirectory = Path.GetDirectoryName(logFile);
+                if (!string.IsNullOrEmpty(logDirectory))
+                {
+                    Directory.CreateDirectory(logDirectory);
+                }
+
+                foreach (var cmd in commands)
                 {
                     try
                     {
@@ -136,6 +246,7 @@ namespace CFIXERV2
                                 FileName = "cmd.exe",
                                 Arguments = "/c " + cmd,
                                 RedirectStandardOutput = true,
+                                RedirectStandardError = true,
                                 UseShellExecute = false,
                                 CreateNoWindow = true
                             }
@@ -143,15 +254,45 @@ namespace CFIXERV2
 
                         process.Start();
                         string output = process.StandardOutput.ReadToEnd();
+                        string error = process.StandardError.ReadToEnd();
                         process.WaitForExit();
 
-                        File.AppendAllText(logFile, $"{DateTime.Now}: {cmd}\n{output}\n\n");
+                        var logEntry = new StringBuilder()
+                            .AppendLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {fixName}")
+                            .AppendLine($"Command: {cmd}")
+                            .AppendLine("Output:");
+
+                        logEntry.AppendLine(string.IsNullOrWhiteSpace(output) ? "(no output)" : output.TrimEnd());
+
+                        if (!string.IsNullOrWhiteSpace(error))
+                        {
+                            logEntry.AppendLine("Errors:");
+                            logEntry.AppendLine(error.TrimEnd());
+                        }
+
+                        logEntry
+                            .AppendLine(new string('-', 60))
+                            .AppendLine();
+
+                        File.AppendAllText(logFile, logEntry.ToString());
                     }
                     catch (Exception ex)
                     {
-                        lblLog.Invoke((Action)(() => lblLog.Text = $"Error running '{cmd}': {ex.Message}"));
+                        UpdateLogSafe($"Error running '{fixName}' command '{cmd}': {ex.Message}");
                     }
-                });
+                }
+            });
+        }
+
+        private void UpdateLogSafe(string message)
+        {
+            if (lblLog.InvokeRequired)
+            {
+                lblLog.Invoke((Action)(() => lblLog.Text = message));
+            }
+            else
+            {
+                lblLog.Text = message;
             }
         }
 
@@ -170,7 +311,7 @@ namespace CFIXERV2
             if (fixes.ContainsKey(fixName))
             {
                 lblLog.Invoke((Action)(() =>
-                    lblLog.Text = fixName == "SFC Scan" || fixName == "DISM Checks"
+                    lblLog.Text = fixName == "DISM Checks"
                         ? $"{fixName} will run in a separate window."
                         : $"Applying {fixName}..."));
 
@@ -180,7 +321,7 @@ namespace CFIXERV2
 
                 progressBarFixes.Value = 100;
                 lblLog.Invoke((Action)(() =>
-                    lblLog.Text = fixName == "SFC Scan" || fixName == "DISM Checks"
+                    lblLog.Text = fixName == "DISM Checks"
                         ? $"{fixName} launched. Follow instructions in the window."
                         : $"{fixName} applied successfully!"));
             }
@@ -207,7 +348,7 @@ namespace CFIXERV2
                 if (fixes.ContainsKey(fixName))
                 {
                     lblLog.Invoke((Action)(() =>
-                        lblLog.Text = fixName == "SFC Scan" || fixName == "DISM Checks"
+                        lblLog.Text = fixName == "DISM Checks"
                             ? $"{fixName} will run in a separate window."
                             : $"Applying {fixName}..."));
 
