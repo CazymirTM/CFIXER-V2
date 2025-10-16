@@ -57,6 +57,7 @@
             // btnApply
             // 
             this.btnApply.BackColor = System.Drawing.Color.Gray;
+            this.btnApply.Font = new System.Drawing.Font("Liberation Sans", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnApply.Location = new System.Drawing.Point(12, 196);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(114, 42);
@@ -80,7 +81,7 @@
             // btnApplyAll
             // 
             this.btnApplyAll.BackColor = System.Drawing.Color.Gray;
-            this.btnApplyAll.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnApplyAll.Font = new System.Drawing.Font("Liberation Sans", 11.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnApplyAll.Location = new System.Drawing.Point(11, 133);
             this.btnApplyAll.Name = "btnApplyAll";
             this.btnApplyAll.Size = new System.Drawing.Size(114, 57);
@@ -92,10 +93,10 @@
             // lblLog
             // 
             this.lblLog.AutoSize = true;
-            this.lblLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLog.Location = new System.Drawing.Point(170, 277);
+            this.lblLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblLog.Location = new System.Drawing.Point(167, 277);
             this.lblLog.Name = "lblLog";
-            this.lblLog.Size = new System.Drawing.Size(180, 24);
+            this.lblLog.Size = new System.Drawing.Size(207, 25);
             this.lblLog.TabIndex = 8;
             this.lblLog.Text = "Awaiting operation...";
             // 
@@ -123,7 +124,7 @@
             // btnContact
             // 
             this.btnContact.BackColor = System.Drawing.Color.Gray;
-            this.btnContact.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnContact.Font = new System.Drawing.Font("Liberation Sans", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnContact.Location = new System.Drawing.Point(11, 470);
             this.btnContact.Name = "btnContact";
             this.btnContact.Size = new System.Drawing.Size(102, 23);
