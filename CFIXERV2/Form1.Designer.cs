@@ -46,7 +46,7 @@
             // lblSelection
             // 
             this.lblSelection.AutoSize = true;
-            this.lblSelection.BackColor = System.Drawing.Color.Yellow;
+            this.lblSelection.BackColor = System.Drawing.Color.Gray;
             this.lblSelection.Font = new System.Drawing.Font("Microsoft YaHei", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSelection.Location = new System.Drawing.Point(131, 133);
             this.lblSelection.Name = "lblSelection";
@@ -56,6 +56,7 @@
             // 
             // btnApply
             // 
+            this.btnApply.BackColor = System.Drawing.Color.Gray;
             this.btnApply.Location = new System.Drawing.Point(12, 196);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(114, 42);
@@ -66,7 +67,7 @@
             // 
             // btnExitApp
             // 
-            this.btnExitApp.BackColor = System.Drawing.SystemColors.GrayText;
+            this.btnExitApp.BackColor = System.Drawing.Color.Gray;
             this.btnExitApp.Font = new System.Drawing.Font("Microsoft YaHei", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExitApp.Location = new System.Drawing.Point(11, 499);
             this.btnExitApp.Name = "btnExitApp";
@@ -78,6 +79,7 @@
             // 
             // btnApplyAll
             // 
+            this.btnApplyAll.BackColor = System.Drawing.Color.Gray;
             this.btnApplyAll.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnApplyAll.Location = new System.Drawing.Point(11, 133);
             this.btnApplyAll.Name = "btnApplyAll";
@@ -91,11 +93,11 @@
             // 
             this.lblLog.AutoSize = true;
             this.lblLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLog.Location = new System.Drawing.Point(270, 247);
+            this.lblLog.Location = new System.Drawing.Point(170, 277);
             this.lblLog.Name = "lblLog";
-            this.lblLog.Size = new System.Drawing.Size(60, 24);
+            this.lblLog.Size = new System.Drawing.Size(180, 24);
             this.lblLog.TabIndex = 8;
-            this.lblLog.Text = "Status";
+            this.lblLog.Text = "Awaiting operation...";
             // 
             // checkedListBox1
             // 
@@ -103,24 +105,26 @@
             this.checkedListBox1.Items.AddRange(new object[] {
             "SFC Scan",
             "DISM Tools",
-            "Network Fixes"});
+            "Network Fixes",
+            "Windows Update Reset",
+            "Firewall Reset"});
             this.checkedListBox1.Location = new System.Drawing.Point(131, 155);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(148, 49);
+            this.checkedListBox1.Size = new System.Drawing.Size(451, 79);
             this.checkedListBox1.TabIndex = 9;
             // 
             // progressBarFixes
             // 
-            this.progressBarFixes.Location = new System.Drawing.Point(131, 210);
+            this.progressBarFixes.Location = new System.Drawing.Point(131, 240);
             this.progressBarFixes.Name = "progressBarFixes";
             this.progressBarFixes.Size = new System.Drawing.Size(451, 34);
             this.progressBarFixes.TabIndex = 10;
             // 
             // btnContact
             // 
-            this.btnContact.BackColor = System.Drawing.SystemColors.GrayText;
+            this.btnContact.BackColor = System.Drawing.Color.Gray;
             this.btnContact.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnContact.Location = new System.Drawing.Point(11, 244);
+            this.btnContact.Location = new System.Drawing.Point(11, 470);
             this.btnContact.Name = "btnContact";
             this.btnContact.Size = new System.Drawing.Size(102, 23);
             this.btnContact.TabIndex = 11;
@@ -151,6 +155,7 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = global::CFIXERV2.Properties.Resources.logocc;
             this.pictureBox1.Location = new System.Drawing.Point(132, -3);
             this.pictureBox1.Name = "pictureBox1";
@@ -176,9 +181,11 @@
             this.Controls.Add(this.btnExitApp);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.lblSelection);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "CFIXER V2";
+            this.Text = "CFIXER V2 by CEZEY";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
