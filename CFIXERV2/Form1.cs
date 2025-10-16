@@ -42,6 +42,7 @@ namespace CFIXERV2
             {
                 { "SFC Scan", RunSFCAsync },
                 { "DISM Checks", RunDISMAsync },
+                { "CHKDSK /R", RunChkDskAsync },
                 { "Network Fixes", RunNetworkFixesAsync },
                 { "Windows Update Reset", RunWindowsUpdateResetAsync },
                 { "Firewall Reset", RunFirewallResetAsync }
@@ -173,6 +174,35 @@ namespace CFIXERV2
             catch (Exception ex)
             {
                 lblLog.Invoke((Action)(() => lblLog.Text = $"Failed to run DISM: {ex.Message}"));
+            }
+
+            return Task.CompletedTask;
+        }
+
+        private Task RunChkDskAsync()
+        {
+            try
+            {
+                MessageBox.Show(
+                    "CHKDSK /R will run in a separate elevated Command Prompt window.\n" +
+                    "It may take a long time and could require a reboot to complete.\n" +
+                    "Follow any prompts shown in the window.",
+                    "CHKDSK /R",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    Arguments = "/k chkdsk C: /r",
+                    UseShellExecute = true,
+                    Verb = "runas",
+                    CreateNoWindow = false
+                });
+            }
+            catch (Exception ex)
+            {
+                lblLog.Invoke((Action)(() => lblLog.Text = $"Failed to run CHKDSK: {ex.Message}"));
             }
 
             return Task.CompletedTask;

@@ -94,7 +94,7 @@
             // 
             this.lblLog.AutoSize = true;
             this.lblLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLog.Location = new System.Drawing.Point(167, 277);
+            this.lblLog.Location = new System.Drawing.Point(167, 291);
             this.lblLog.Name = "lblLog";
             this.lblLog.Size = new System.Drawing.Size(207, 25);
             this.lblLog.TabIndex = 8;
@@ -106,17 +106,18 @@
             this.checkedListBox1.Items.AddRange(new object[] {
             "SFC Scan",
             "DISM Tools",
+            "CHKDSK /R",
             "Network Fixes",
             "Windows Update Reset",
             "Firewall Reset"});
             this.checkedListBox1.Location = new System.Drawing.Point(131, 155);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(451, 79);
+            this.checkedListBox1.Size = new System.Drawing.Size(451, 94);
             this.checkedListBox1.TabIndex = 9;
             // 
             // progressBarFixes
             // 
-            this.progressBarFixes.Location = new System.Drawing.Point(131, 240);
+            this.progressBarFixes.Location = new System.Drawing.Point(131, 253);
             this.progressBarFixes.Name = "progressBarFixes";
             this.progressBarFixes.Size = new System.Drawing.Size(451, 34);
             this.progressBarFixes.TabIndex = 10;
@@ -140,19 +141,19 @@
             this.lblWarning.ForeColor = System.Drawing.Color.Red;
             this.lblWarning.Location = new System.Drawing.Point(12, 549);
             this.lblWarning.Name = "lblWarning";
-            this.lblWarning.Size = new System.Drawing.Size(329, 20);
+            this.lblWarning.Size = new System.Drawing.Size(99, 20);
             this.lblWarning.TabIndex = 12;
-            this.lblWarning.Text = "WARNING FOR AUTHORIZED USERS:";
+            this.lblWarning.Text = "WARNING:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(8, 569);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(658, 13);
+            this.label1.Size = new System.Drawing.Size(463, 13);
             this.label1.TabIndex = 13;
-            this.label1.Text = "Please use chkdsk /r in another terminal if you encounter dism issues, these are " +
-    "problematic issues that needs solving using that command";
+            this.label1.Text = "Only use chkdsk command if you have problems with your hard disk/ssd or with DISM" +
+    " command.";
             // 
             // pictureBox1
             // 
