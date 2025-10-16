@@ -1,6 +1,4 @@
-This app does what it says, it uses GUI because C# shi, you can select what fixes to apply, or apply all of them (select multiple), it only have 3 fixes cause if you have big viruses problems then you're cooked, i put mostly usefull stuff in it.
+# A GUI fixer tool for windows (using dism commands, network commands, windows updates fixes, sfc scan, etc).
+## (Made in C# WinForms)
 
-(make sure to run as administrator)
-
-
-(It doesn't use any extension, it simply uses windows cmd to apply some fixes but with GUI).
+__(make sure to run as administrator)__
