@@ -1,4 +1,4 @@
-# CFIXER V2 (Private for now)
+# CFIXER V2
 
 A GUI fixer tool for windows (using dism commands, network commands, windows updates fixes, sfc scan, etc).
 
